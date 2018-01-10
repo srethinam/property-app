@@ -7,20 +7,32 @@
 //
 
 import UIKit
+import Alamofire
+import AlamofireImage
 
 protocol PropertySelectionDelegate: class {
     func propertySelected(_ newProperty: Property)
 }
 
-class MasterViewController: UITableViewController {
+class MasterViewController: UITableViewController, UISplitViewControllerDelegate {
+    var collapseDetailViewController: Bool  = true
 
     var properties: [Property] = [Property]()
     weak var delegate: PropertySelectionDelegate?
 
+    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool {
+        return true
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.splitViewController!.delegate = self;
+        
+        //self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.AllVisible
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+        
         let url = "http://demo0065087.mockable.io/test/properties"
         loadURL(url: url)
         // Uncomment the following line to preserve selection between presentations
@@ -74,7 +86,7 @@ class MasterViewController: UITableViewController {
                     
                     let photo = results["photo"] as! [String:Any]
                     let image = photo["image"] as! [String:Any]
-                    let propertyImage = image["medium"] as! [String:Any]
+                    let propertyImage = image["small"] as! [String:Any]
                     propertyObj.propertyImageUrl = propertyImage["url"] as! String
 
                     self.properties.append(propertyObj)
@@ -118,21 +130,44 @@ class MasterViewController: UITableViewController {
         cell.address2Label.text = properties[indexPath.row].address_2+stringWithComma+properties[indexPath.row].suburb+stringWithComma+String(properties[indexPath.row].postcode)
 
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
-        
-        //cell.propertyImageView.imageFromURL(urlString: properties[indexPath.row].propertyImageUrl)
-        //let url = URL(string: properties[indexPath.row].propertyImageUrl)
-        //let data = try? Data(contentsOf: url!)
-        
-//        if let imageData = data {
-//            let image = UIImage(data: imageData)
-//            cell.propertyImageView.image = image
-//
-//        }
-        cell.avatarImageView.imageFromURL(urlString: properties[indexPath.row].avatar)
+                
+        Alamofire.request(properties[indexPath.row].avatar).response { response in
+            if let data = response.data {
+                let image = UIImage(data: data)
+                cell.avatarImageView.image = image
 
+            } else {
+                print("Data is nil. I don't know what to do :(")
+                return
+            }
+        }
+        
+        Alamofire.request(properties[indexPath.row].propertyImageUrl).response { response in
+            if let data = response.data {
+                let image = UIImage(data: data)
+                cell.propertyImageView.image = image
+                
+            } else {
+                print("Data is nil. I don't know what to do :(")
+                return
+            }
+        }
+        
         return cell
     }
 
+    func getImageFromUrl (url: String) -> UIImage {
+        var image: UIImage!
+        Alamofire.request(url).response { response in
+            if let data = response.data {
+                image = UIImage(data: data)
+            } else {
+                print("Data is nil. I don't know what to do :(")
+                return
+            }
+        }
+        return image
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -179,6 +214,8 @@ class MasterViewController: UITableViewController {
     */
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        collapseDetailViewController = false
+
         let selectedProperty = properties[indexPath.row]
         delegate?.propertySelected(selectedProperty)
         if let detailViewController = delegate as? DetailViewController,
@@ -188,7 +225,7 @@ class MasterViewController: UITableViewController {
     }
 }
 
-extension UIImageView {
+/*extension UIImageView {
     public func imageFromURL(urlString: String) {
         
         let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -212,4 +249,4 @@ extension UIImageView {
             
         }).resume()
     }
-}
+}*/
