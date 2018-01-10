@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		348511952006529F0075CA0F /* SplitViewSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348511942006529F0075CA0F /* SplitViewSupport.swift */; };
 		34AB26992006188A0078AEEB /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AB26982006188A0078AEEB /* CustomTableViewCell.swift */; };
 		34E0E9BD2001AD2F0068F7EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E0E9BC2001AD2F0068F7EE /* AppDelegate.swift */; };
 		34E0E9C22001AD2F0068F7EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34E0E9C02001AD2F0068F7EE /* Main.storyboard */; };
@@ -33,7 +32,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		348511942006529F0075CA0F /* SplitViewSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewSupport.swift; sourceTree = "<group>"; };
 		34851196200653E80075CA0F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		34AB26982006188A0078AEEB /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		34E0E9B92001AD2F0068F7EE /* PropertyApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PropertyApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,7 +83,6 @@
 			children = (
 				34851196200653E80075CA0F /* README.md */,
 				34E0E9BC2001AD2F0068F7EE /* AppDelegate.swift */,
-				348511942006529F0075CA0F /* SplitViewSupport.swift */,
 				34E0E9C02001AD2F0068F7EE /* Main.storyboard */,
 				34E0E9C32001AD2F0068F7EE /* Assets.xcassets */,
 				34E0E9C52001AD2F0068F7EE /* LaunchScreen.storyboard */,
@@ -248,7 +245,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				34E0E9D12001B88A0068F7EE /* DetailViewController.swift in Sources */,
-				348511952006529F0075CA0F /* SplitViewSupport.swift in Sources */,
 				34AB26992006188A0078AEEB /* CustomTableViewCell.swift in Sources */,
 				34E0E9CF2001B7010068F7EE /* MasterViewController.swift in Sources */,
 				34E0E9D32001B9CC0068F7EE /* Property.swift in Sources */,

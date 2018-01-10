@@ -15,21 +15,16 @@ protocol PropertySelectionDelegate: class {
 }
 
 class MasterViewController: UITableViewController, UISplitViewControllerDelegate {
-    var collapseDetailViewController: Bool  = true
 
     var properties: [Property] = [Property]()
     weak var delegate: PropertySelectionDelegate?
-
-    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool {
-        return true
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.splitViewController!.delegate = self;
         
-        //self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.AllVisible
+        self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         
         self.extendedLayoutIncludesOpaqueBars = true
         
@@ -94,6 +89,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                 }
                 DispatchQueue.main.async {
                     print("properties count: \(self.properties.count)")
+                    self.tableView.reloadData()
                 }
             }catch{
                 DispatchQueue.main.async {
@@ -214,7 +210,6 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     */
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        collapseDetailViewController = false
 
         let selectedProperty = properties[indexPath.row]
         delegate?.propertySelected(selectedProperty)
@@ -223,30 +218,14 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             splitViewController?.showDetailViewController(detailNavigationController, sender: nil)
         }
     }
+    
+    func splitViewController(
+        _ splitViewController: UISplitViewController,
+        collapseSecondary secondaryViewController: UIViewController,
+        onto primaryViewController: UIViewController) -> Bool {
+        // Return true to prevent UIKit from applying its default behavior
+        return true
+    }
+    
 }
 
-/*extension UIImageView {
-    public func imageFromURL(urlString: String) {
-        
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        activityIndicator.frame = CGRect.init(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)
-        activityIndicator.startAnimating()
-        if self.image == nil{
-            self.addSubview(activityIndicator)
-        }
-        
-        URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
-            
-            if error != nil {
-                print(error ?? "No Error")
-                return
-            }
-            DispatchQueue.main.async(execute: { () -> Void in
-                let image = UIImage(data: data!)
-                activityIndicator.removeFromSuperview()
-                self.image = image
-            })
-            
-        }).resume()
-    }
-}*/
