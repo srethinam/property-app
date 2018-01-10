@@ -120,14 +120,14 @@ class MasterViewController: UITableViewController {
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
         
         //cell.propertyImageView.imageFromURL(urlString: properties[indexPath.row].propertyImageUrl)
-        let url = URL(string: properties[indexPath.row].propertyImageUrl)
-        let data = try? Data(contentsOf: url!)
+        //let url = URL(string: properties[indexPath.row].propertyImageUrl)
+        //let data = try? Data(contentsOf: url!)
         
-        if let imageData = data {
-            let image = UIImage(data: imageData)
-            cell.propertyImageView.image = image
-
-        }
+//        if let imageData = data {
+//            let image = UIImage(data: imageData)
+//            cell.propertyImageView.image = image
+//
+//        }
         cell.avatarImageView.imageFromURL(urlString: properties[indexPath.row].avatar)
 
         return cell
