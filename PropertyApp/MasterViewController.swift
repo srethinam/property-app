@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import AlamofireImage
+import MBProgressHUD
 
 protocol PropertySelectionDelegate: class {
     func propertySelected(_ newProperty: Property)
@@ -21,7 +22,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.splitViewController!.delegate = self;
         
         self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
@@ -127,12 +128,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
         print ("index path row outside, \(indexPath.row)")
-
         Alamofire.request(properties[indexPath.row].avatar).response { response in
             if let data = response.data {
                 let image = UIImage(data: data)
                 cell.avatarImageView.image = image
                 print ("index path row inside, \(indexPath.row)")
+                
             } else {
                 print("Data is nil. I don't know what to do :(")
                 return
@@ -153,6 +154,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         return cell
     }
 
+    
+    
+    private func hideLoadingHUD() {
+        MBProgressHUD.hide(for: tableView, animated: true)
+    }
+    
     func getImageFromUrl (url: String) -> UIImage {
         var image: UIImage!
         Alamofire.request(url).response { response in
@@ -225,6 +232,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         collapseSecondary secondaryViewController: UIViewController,
         onto primaryViewController: UIViewController) -> Bool {
         // Return true to prevent UIKit from applying its default behavior
+        hideLoadingHUD()
         return true
     }
     

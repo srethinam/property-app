@@ -4,4 +4,5 @@ use_frameworks!
 
 target 'PropertyApp' do
 pod 'AlamofireImage', '~> 3.3'
+pod 'MBProgressHUD', '~> 1.0'
 end
