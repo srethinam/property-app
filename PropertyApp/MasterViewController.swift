@@ -50,7 +50,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                 self.properties.removeAll()
                 for value in array{
                     let results = value as! [String:Any]
-                    print("value - \(value)")
+                    //print("value - \(value)")
                     let propertyObj   = Property()
                     propertyObj.title = results["title"] as! String
                     propertyObj.price = results["price"] as! Double
@@ -88,7 +88,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
                 }
                 DispatchQueue.main.async {
-                    print("properties count: \(self.properties.count)")
+                    //print("properties count: \(self.properties.count)")
                     self.tableView.reloadData()
                 }
             }catch{
@@ -114,7 +114,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         let emptyString = " "
         let stringWithComma = ","
-        let stringWithAUD = "AUD"
+        let stringWithAUD = "$"
 
         cell.priceLabel.text = stringWithAUD+String(properties[indexPath.row].price)
 
@@ -126,12 +126,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         cell.address2Label.text = properties[indexPath.row].address_2+stringWithComma+properties[indexPath.row].suburb+stringWithComma+String(properties[indexPath.row].postcode)
 
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
-                
+        print ("index path row outside, \(indexPath.row)")
+
         Alamofire.request(properties[indexPath.row].avatar).response { response in
             if let data = response.data {
                 let image = UIImage(data: data)
                 cell.avatarImageView.image = image
-
+                print ("index path row inside, \(indexPath.row)")
             } else {
                 print("Data is nil. I don't know what to do :(")
                 return
