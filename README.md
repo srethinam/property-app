@@ -9,6 +9,6 @@
 6. Used UISplitViewController for master and detail view and it can be viewable in iPad and iPhone Plus devices
 
 
-#To-doapp
+#To-do
 1. Mark-down comments to be done with Jazzy tool
 2. Standard/premium listing
