@@ -1,11 +1,14 @@
 # property-app
 
 #Done
-1. JSON Parsing
-2. Populate UI using json data
+1. Swift 4
+2. JSON Parsing
+3. Populate UI using json data
+4. Alamofire, MBProgressHUD frameworks used in this project via Cocoapads
+5. Implemented lazy loading for loading images
+6. Used UISplitViewController for master and detail view and it can be viewable in iPad and iPhone Plus devices
+
 
 #To-doapp
-1. Loading bar to be shown untill loading actual image
-2. Mark-down comments to be done with Jazzy tool
-3. Standard/premium listing
-4. Bug fixes
+1. Mark-down comments to be done with Jazzy tool
+2. Standard/premium listing

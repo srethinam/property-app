@@ -19,9 +19,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
     var properties: [Property] = [Property]()
     weak var delegate: PropertySelectionDelegate?
-    
+    var isFirstLaunch: Bool = true;
     override func viewWillAppear(_ animated: Bool) {
-        showLoadingHUD()
+        if isFirstLaunch {
+            showLoadingHUD()
+            isFirstLaunch = false
+            
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,7 +99,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     //print("properties count: \(self.properties.count)")
                     self.getPropertyImages()
                     self.getAvatarImages()
-                    self.tableView.reloadData()
+                    //self.tableView.reloadData()
                     self.hideLoadingHUD()
                 }
             }catch{
@@ -181,13 +185,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                         let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_property.png")
                         try? dataImage.write(to: filename)
                         print("documents directory - ", filename)
-                        self.tableView.reloadData()
                     }
                 } else {
-                    print("Data is nil. I don't know what to do :(")
+                    print("Data is nil.")
                     return
                 }
             }
+            self.tableView.reloadData()
         }
     }
     
@@ -199,13 +203,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
                         let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_avatar.png")
                         try? dataImage.write(to: filename)
-                        self.tableView.reloadData()
                     }
                 } else {
-                    print("Data is nil. I don't know what to do :(")
+                    print("Data is nil.")
                     return
                 }
             }
+            self.tableView.reloadData()
         }
     }
 
