@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        showLoadingHUD()
 
         guard let splitViewController = window?.rootViewController as? UISplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
@@ -57,12 +56,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-    private func showLoadingHUD() {
-        let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
-        let hud = MBProgressHUD.showAdded(to: window, animated: true)
-        hud.label.text = "Loading..."
-    }
-
 }
 

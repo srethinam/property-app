@@ -20,17 +20,20 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     var properties: [Property] = [Property]()
     weak var delegate: PropertySelectionDelegate?
     
+    override func viewWillAppear(_ animated: Bool) {
+        showLoadingHUD()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.splitViewController!.delegate = self;
-        
+
         self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         
         self.extendedLayoutIncludesOpaqueBars = true
         
         let url = "http://demo0065087.mockable.io/test/properties"
         loadURL(url: url)
+
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -90,7 +93,10 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                 }
                 DispatchQueue.main.async {
                     //print("properties count: \(self.properties.count)")
+                    self.getPropertyImages()
+                    self.getAvatarImages()
                     self.tableView.reloadData()
+                    self.hideLoadingHUD()
                 }
             }catch{
                 DispatchQueue.main.async {
@@ -128,50 +134,86 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
         print ("index path row outside, \(indexPath.row)")
-        Alamofire.request(properties[indexPath.row].avatar).response { response in
-            if let data = response.data {
-                let image = UIImage(data: data)
-                cell.avatarImageView.image = image
-                print ("index path row inside, \(indexPath.row)")
-                
-            } else {
-                print("Data is nil. I don't know what to do :(")
-                return
-            }
+        let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
+        let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
+        avatarHud.backgroundView.color = UIColor.white
+        avatarHud.bezelView.color = UIColor.clear
+        
+        propertyHud.backgroundView.color = UIColor.white
+        propertyHud.bezelView.color = UIColor.clear
+        
+        cell.avatarImageView?.layer.cornerRadius = (cell.avatarImageView?.frame.size.width)! / 2
+        cell.avatarImageView?.layer.masksToBounds = true
+        
+        let fileManager : FileManager   = FileManager.default
+        let docsDir     : URL       = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(indexPath.row)_property.png")
+        let strpropertyImagePath   : String    = propertyImagePath.path
+        
+        if fileManager.fileExists(atPath:strpropertyImagePath){
+            cell.propertyImageView.image = UIImage (named: strpropertyImagePath)
+            MBProgressHUD.hide(for: cell.propertyImageView, animated: true)
+            print("Proprety Image Found at :: \(strpropertyImagePath)")
+        }else{
+            print("Proprety Image NOT Found at :: \(strpropertyImagePath)")
         }
         
-        Alamofire.request(properties[indexPath.row].propertyImageUrl).response { response in
-            if let data = response.data {
-                let image = UIImage(data: data)
-                cell.propertyImageView.image = image
-                
-            } else {
-                print("Data is nil. I don't know what to do :(")
-                return
-            }
+        let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(indexPath.row)_avatar.png")
+        let stravatarImagePath   : String    = avatarImagePath.path
+
+        if fileManager.fileExists(atPath:stravatarImagePath){
+            cell.avatarImageView.image = UIImage (named: stravatarImagePath)
+            MBProgressHUD.hide(for: cell.avatarImageView, animated: true)
+            print("Avatar Image Found at :: \(stravatarImagePath)")
+        }else{
+            print("Avatar Image NOT Found at :: \(stravatarImagePath)")
         }
         
         return cell
     }
-
     
-    
-    private func hideLoadingHUD() {
-        MBProgressHUD.hide(for: tableView, animated: true)
-    }
-    
-    func getImageFromUrl (url: String) -> UIImage {
-        var image: UIImage!
-        Alamofire.request(url).response { response in
-            if let data = response.data {
-                image = UIImage(data: data)
-            } else {
-                print("Data is nil. I don't know what to do :(")
-                return
+    func getPropertyImages(){
+        for var i in (0..<properties.count){
+            Alamofire.request(properties[i].propertyImageUrl).response { response in
+                if let data = response.data {
+                    let image = UIImage(data: data)
+                    if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_property.png")
+                        try? dataImage.write(to: filename)
+                        print("documents directory - ", filename)
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    print("Data is nil. I don't know what to do :(")
+                    return
+                }
             }
         }
-        return image
     }
+    
+    func getAvatarImages(){
+        for var i in (0..<properties.count){
+            Alamofire.request(properties[i].avatar).response { response in
+                if let data = response.data {
+                    let image = UIImage(data: data)
+                    if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_avatar.png")
+                        try? dataImage.write(to: filename)
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    print("Data is nil. I don't know what to do :(")
+                    return
+                }
+            }
+        }
+    }
+
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -234,6 +276,19 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         // Return true to prevent UIKit from applying its default behavior
         hideLoadingHUD()
         return true
+    }
+    
+    private func showLoadingHUD() {
+        let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
+        let hud = MBProgressHUD.showAdded(to: window, animated: true)
+        hud.label.text = "Loading..."
+        hud.backgroundView.color = UIColor.white
+        hud.bezelView.color = UIColor.clear
+    }
+    
+    private func hideLoadingHUD() {
+        let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
+        MBProgressHUD.hide(for: window, animated: true)
     }
     
 }
