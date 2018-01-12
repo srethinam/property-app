@@ -2,7 +2,7 @@
 //  CustomTableViewCell.swift
 //  PropertyApp
 //
-//  Created by Vaan on 10/01/18.
+//  Created by Saravanan Rethinam on 10/01/18.
 //  Copyright © 2018 TGL. All rights reserved.
 //
 
