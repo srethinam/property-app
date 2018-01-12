@@ -8,6 +8,3 @@
 5. Implemented lazy loading for loading images
 6. Used UISplitViewController for master and detail view and it can be viewable in iPad and iPhone Plus devices
 
-
-#To-do
-1. Standard/premium listing

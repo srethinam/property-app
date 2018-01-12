@@ -16,6 +16,10 @@ protocol PropertySelectionDelegate: class {
 }
 
 class MasterViewController: UITableViewController, UISplitViewControllerDelegate {
+    var segmentControl: UISegmentedControl!
+    var isPremium: Bool = false
+    var premiumProperties: [Property] = [Property]()
+    var standardProperties: [Property] = [Property]()
 
     /// properties variable holds all the properties list.
     var properties: [Property] = [Property]()
@@ -30,12 +34,19 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.splitViewController!.delegate = self;
 
         self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         
         self.extendedLayoutIncludesOpaqueBars = true
         
+        segmentControl = UISegmentedControl(frame: CGRect(x: 50, y: 7, width: tableView.frame.width - 100, height: 37))
+        segmentControl.insertSegment(withTitle: "Standard", at: 0, animated: false)
+        segmentControl.insertSegment(withTitle: "Premium", at: 1, animated: false)
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.addTarget(self, action: #selector(changeType(sender:)), for: .valueChanged)
+
         let url = "http://demo0065087.mockable.io/test/properties"
         loadURL(url: url)
 
@@ -103,6 +114,11 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                 }
                 DispatchQueue.main.async {
                     //print("properties count: \(self.properties.count)")
+                    self.premiumProperties = self.properties.filter({$0.isPremium == true})
+                    print("premiumProperties count: \(self.premiumProperties.count)")
+                    self.standardProperties = self.properties.filter({$0.isPremium == false})
+                    print("standardProperties count: \(self.standardProperties.count)")
+
                     self.getPropertyImages()
                     self.getAvatarImages()
                     //self.tableView.reloadData()
@@ -122,9 +138,28 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         // Dispose of any resources that can be recreated.
     }
 
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Section"
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let vw = UIView()
+        vw.backgroundColor = UIColor.white
+        vw.addSubview(segmentControl)
+        
+        return vw
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+         return 50.0
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return properties.count
+        if isPremium {
+            return premiumProperties.count
+        }
+        return standardProperties.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -132,17 +167,24 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         let emptyString = " "
         let stringWithComma = ","
         let stringWithAUD = "$"
+        var propertiesObj:[Property] = [Property]()
+        
+        if isPremium {
+            propertiesObj = premiumProperties
+        }
+        else{
+            propertiesObj = standardProperties
+        }
+        cell.priceLabel.text = stringWithAUD+String(propertiesObj[indexPath.row].price)
 
-        cell.priceLabel.text = stringWithAUD+String(properties[indexPath.row].price)
+        cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
+        cell.bedroomsLabel.text = String(propertiesObj[indexPath.row].bedRooms)
+        cell.bathroomsLabel.text = String(propertiesObj[indexPath.row].bathRooms)
+        cell.titleLabel.text = propertiesObj[indexPath.row].title
+        cell.address1Label.text = propertiesObj[indexPath.row].address_1
+        cell.address2Label.text = propertiesObj[indexPath.row].address_2+stringWithComma+propertiesObj[indexPath.row].suburb+stringWithComma+String(propertiesObj[indexPath.row].postcode)
 
-        cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
-        cell.bedroomsLabel.text = String(properties[indexPath.row].bedRooms)
-        cell.bathroomsLabel.text = String(properties[indexPath.row].bathRooms)
-        cell.titleLabel.text = properties[indexPath.row].title
-        cell.address1Label.text = properties[indexPath.row].address_1
-        cell.address2Label.text = properties[indexPath.row].address_2+stringWithComma+properties[indexPath.row].suburb+stringWithComma+String(properties[indexPath.row].postcode)
-
-        cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
+        cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
         //print ("index path row outside, \(indexPath.row)")
         let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
         let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
@@ -157,7 +199,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         
         let fileManager : FileManager   = FileManager.default
         let docsDir     : URL       = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(indexPath.row)_property.png")
+        let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title)_property.png")
         let strpropertyImagePath   : String    = propertyImagePath.path
         
         if fileManager.fileExists(atPath:strpropertyImagePath){
@@ -168,7 +210,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             print("Proprety Image NOT Found at :: \(strpropertyImagePath)")
         }
         
-        let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(indexPath.row)_avatar.png")
+        let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title)_avatar.png")
         let stravatarImagePath   : String    = avatarImagePath.path
 
         if fileManager.fileExists(atPath:stravatarImagePath){
@@ -189,12 +231,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
      - Returns:
      */
     func getPropertyImages(){
+        
         for var i in (0..<properties.count){
             Alamofire.request(properties[i].propertyImageUrl).response { response in
                 if let data = response.data {
                     let image = UIImage(data: data)
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
-                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_property.png")
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title)_property.png")
                         try? dataImage.write(to: filename)
                         //print("documents directory - ", filename)
                     }
@@ -214,14 +257,15 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
      - Returns:
      */
     func getAvatarImages(){
+        
         for var i in (0..<properties.count){
             Alamofire.request(properties[i].avatar).response { response in
                 if let data = response.data {
                     let image = UIImage(data: data)
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
-                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_avatar.png")
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title)_avatar.png")
                         try? dataImage.write(to: filename)
-                        self.tableView.reloadData()
+                        //self.tableView.reloadData()
                     }
                 } else {
                     print("Data is nil.")
@@ -263,9 +307,6 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     
     /**
      Function to show the loading bar.
-     
-     - Parameter:
-     - Returns:
      */
     private func showLoadingHUD() {
         let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
@@ -278,13 +319,27 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
     
     /**
      Function to hide the loading bar.
-     
-     - Parameter: 
-     - Returns:
      */
     private func hideLoadingHUD() {
         let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
         MBProgressHUD.hide(for: window, animated: true)
+    }
+    
+    /**
+     Handler for when custom Segmented Control changes and will change the
+     background color of the view depending on the selection.
+     */
+    @objc func changeType(sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            isPremium = false
+            self.tableView.reloadData()
+        case 1:
+            isPremium = true
+            self.tableView.reloadData()
+        default:
+            break
+        }
     }
     
 }
