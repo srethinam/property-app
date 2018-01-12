@@ -17,6 +17,7 @@ protocol PropertySelectionDelegate: class {
 
 class MasterViewController: UITableViewController, UISplitViewControllerDelegate {
 
+    /// properties variable holds all the properties list.
     var properties: [Property] = [Property]()
     weak var delegate: PropertySelectionDelegate?
     var isFirstLaunch: Bool = true;
@@ -45,7 +46,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
-    //function to fetch the json from URL
+    /**
+     Function to fetch the json from URL.
+     
+     - Parameter url: json url string to provide properties list.
+     - Returns: void
+     */
     func loadURL(url:String){
         
         DispatchQueue.global().async {
@@ -137,7 +143,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         cell.address2Label.text = properties[indexPath.row].address_2+stringWithComma+properties[indexPath.row].suburb+stringWithComma+String(properties[indexPath.row].postcode)
 
         cell.nameLabel.text = properties[indexPath.row].firstName+emptyString+properties[indexPath.row].lastName
-        print ("index path row outside, \(indexPath.row)")
+        //print ("index path row outside, \(indexPath.row)")
         let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
         let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
         avatarHud.backgroundView.color = UIColor.white
@@ -176,6 +182,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         return cell
     }
     
+    /**
+     Function to fetch all the property images in lazy loading.
+     
+     - Parameter url:
+     - Returns:
+     */
     func getPropertyImages(){
         for var i in (0..<properties.count){
             Alamofire.request(properties[i].propertyImageUrl).response { response in
@@ -184,17 +196,23 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
                         let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_property.png")
                         try? dataImage.write(to: filename)
-                        print("documents directory - ", filename)
+                        //print("documents directory - ", filename)
                     }
                 } else {
                     print("Data is nil.")
                     return
                 }
             }
-            self.tableView.reloadData()
         }
+        self.tableView.reloadData()
     }
     
+    /**
+     Function to fetch all the avatar images in lazy loading.
+     
+     - Parameter url:
+     - Returns:
+     */
     func getAvatarImages(){
         for var i in (0..<properties.count){
             Alamofire.request(properties[i].avatar).response { response in
@@ -203,65 +221,26 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
                         let filename = self.getDocumentsDirectory().appendingPathComponent("\(i)_avatar.png")
                         try? dataImage.write(to: filename)
+                        self.tableView.reloadData()
                     }
                 } else {
                     print("Data is nil.")
                     return
                 }
             }
-            self.tableView.reloadData()
         }
     }
 
+    /**
+     Function to get the document directory.
+     
+     - Parameter:
+     - Returns: Document directory URL
+     */
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
     }
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
@@ -282,6 +261,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         return true
     }
     
+    /**
+     Function to show the loading bar.
+     
+     - Parameter:
+     - Returns:
+     */
     private func showLoadingHUD() {
         let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
         let hud = MBProgressHUD.showAdded(to: window, animated: true)
@@ -290,6 +275,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         hud.bezelView.color = UIColor.clear
     }
     
+    
+    /**
+     Function to hide the loading bar.
+     
+     - Parameter: 
+     - Returns:
+     */
     private func hideLoadingHUD() {
         let window:UIWindow = UIApplication.shared.windows.last as UIWindow!
         MBProgressHUD.hide(for: window, animated: true)

@@ -10,5 +10,4 @@
 
 
 #To-do
-1. Mark-down comments to be done with Jazzy tool
-2. Standard/premium listing
+1. Standard/premium listing
