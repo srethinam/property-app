@@ -177,7 +177,6 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         cell.nameLabel?.font = UIFont(name: "Lato-Light", size: 16)
         cell.priceLabel?.font = UIFont(name: "Lato-Bold", size: 18)
 
-        
         cell.priceLabel.text = stringWithAUD+String(propertiesObj[indexPath.row].price)
         cell.priceLabel.backgroundColor = UIColor.lightGray
         cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
@@ -205,12 +204,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         if fileManager.fileExists(atPath:strpropertyImagePath){
             cell.propertyImageView.image = UIImage (named: strpropertyImagePath)
             MBProgressHUD.hide(for: cell.propertyImageView, animated: true)
-            print("Proprety Image Found at :: \(strpropertyImagePath)")
+            //print("Proprety Image Found at :: \(strpropertyImagePath)")
         }else{
             let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
             propertyHud.backgroundView.color = UIColor.white
             propertyHud.bezelView.color = UIColor.clear
-            print("Proprety Image NOT Found at :: \(strpropertyImagePath)")
+            //print("Proprety Image NOT Found at :: \(strpropertyImagePath)")
         }
         
         let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title!)_avatar.png")
@@ -220,12 +219,12 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             MBProgressHUD.hide(for: cell.avatarImageView, animated: false)
             let availableImage: UIImage = UIImage (named: stravatarImagePath)!
             cell.avatarImageView.image = availableImage
-            print("Avatar Image Found at :: \(stravatarImagePath)")
+            //print("Avatar Image Found at :: \(stravatarImagePath)")
         }else{
             let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
             avatarHud.backgroundView.color = UIColor.white
             avatarHud.bezelView.color = UIColor.clear
-            print("Avatar Image NOT Found at :: \(stravatarImagePath)")
+            //print("Avatar Image NOT Found at :: \(stravatarImagePath)")
         }
         
         return cell
@@ -273,6 +272,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
                         let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title!)_avatar.png")
                         try? dataImage.write(to: filename)
+                        //print("documents directory - ", filename)
                         self.tableView.reloadData()
                     }
                 } else {
