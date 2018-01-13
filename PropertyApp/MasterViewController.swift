@@ -30,6 +30,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             showLoadingHUD()
             isFirstLaunch = false
         }
+        self.tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -170,7 +171,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             propertiesObj = standardProperties
         }
         cell.priceLabel.text = stringWithAUD+String(propertiesObj[indexPath.row].price)
-
+        cell.priceLabel.backgroundColor = UIColor.lightGray
         cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
         cell.bedroomsLabel.text = String(propertiesObj[indexPath.row].bedRooms)
         cell.bathroomsLabel.text = String(propertiesObj[indexPath.row].bathRooms)
@@ -180,20 +181,13 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
         cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
         //print ("index path row outside, \(indexPath.row)")
-        let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
-        let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
-        avatarHud.backgroundView.color = UIColor.white
-        avatarHud.bezelView.color = UIColor.clear
-        
-        propertyHud.backgroundView.color = UIColor.white
-        propertyHud.bezelView.color = UIColor.clear
         
         cell.avatarImageView?.layer.cornerRadius = (cell.avatarImageView?.frame.size.width)! / 2
         cell.avatarImageView?.layer.masksToBounds = true
         
         let fileManager : FileManager   = FileManager.default
         let docsDir     : URL       = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title)_property.png")
+        let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title!)_property.png")
         let strpropertyImagePath   : String    = propertyImagePath.path
         
         if fileManager.fileExists(atPath:strpropertyImagePath){
@@ -201,17 +195,24 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
             MBProgressHUD.hide(for: cell.propertyImageView, animated: true)
             print("Proprety Image Found at :: \(strpropertyImagePath)")
         }else{
+            let propertyHud = MBProgressHUD.showAdded(to: cell.propertyImageView, animated: true)
+            propertyHud.backgroundView.color = UIColor.white
+            propertyHud.bezelView.color = UIColor.clear
             print("Proprety Image NOT Found at :: \(strpropertyImagePath)")
         }
         
-        let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title)_avatar.png")
+        let avatarImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title!)_avatar.png")
         let stravatarImagePath   : String    = avatarImagePath.path
 
         if fileManager.fileExists(atPath:stravatarImagePath){
-            cell.avatarImageView.image = UIImage (named: stravatarImagePath)
-            MBProgressHUD.hide(for: cell.avatarImageView, animated: true)
+            MBProgressHUD.hide(for: cell.avatarImageView, animated: false)
+            let availableImage: UIImage = UIImage (named: stravatarImagePath)!
+            cell.avatarImageView.image = availableImage
             print("Avatar Image Found at :: \(stravatarImagePath)")
         }else{
+            let avatarHud = MBProgressHUD.showAdded(to: cell.avatarImageView, animated: true)
+            avatarHud.backgroundView.color = UIColor.white
+            avatarHud.bezelView.color = UIColor.clear
             print("Avatar Image NOT Found at :: \(stravatarImagePath)")
         }
         
@@ -226,14 +227,15 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
      */
     func getPropertyImages(){
         
-        for var i in (0..<properties.count){
+        for i in (0..<properties.count){
             Alamofire.request(properties[i].propertyImageUrl).response { response in
                 if let data = response.data {
                     let image = UIImage(data: data)
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
-                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title)_property.png")
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title!)_property.png")
                         try? dataImage.write(to: filename)
                         //print("documents directory - ", filename)
+                        self.tableView.reloadData()
                     }
                 } else {
                     print("Data is nil.")
@@ -252,14 +254,14 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
      */
     func getAvatarImages(){
         
-        for var i in (0..<properties.count){
+        for i in (0..<properties.count){
             Alamofire.request(properties[i].avatar).response { response in
                 if let data = response.data {
                     let image = UIImage(data: data)
                     if let dataImage = UIImageJPEGRepresentation(image!, 0.8) {
-                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title)_avatar.png")
+                        let filename = self.getDocumentsDirectory().appendingPathComponent("\(self.properties[i].title!)_avatar.png")
                         try? dataImage.write(to: filename)
-                        //self.tableView.reloadData()
+                        self.tableView.reloadData()
                     }
                 } else {
                     print("Data is nil.")
