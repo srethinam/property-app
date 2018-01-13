@@ -196,6 +196,8 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         cell.avatarImageView?.layer.cornerRadius = (cell.avatarImageView?.frame.size.width)! / 2
         cell.avatarImageView?.layer.masksToBounds = true
         
+        cell.propertyImageView.image = UIImage (named: "house-illustration-clipart.png")
+        
         let fileManager : FileManager   = FileManager.default
         let docsDir     : URL       = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let propertyImagePath      : URL       = docsDir.appendingPathComponent("\(propertiesObj[indexPath.row].title!)_property.png")
@@ -254,7 +256,6 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                 }
             }
         }
-        self.tableView.reloadData()
     }
     
     /**
