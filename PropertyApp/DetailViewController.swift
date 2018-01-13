@@ -9,8 +9,9 @@
 import UIKit
 
 class DetailViewController: UIViewController {
-    @IBOutlet weak var descriptionLabel: UILabel!
-    
+    @IBOutlet weak var descriptionTextView: UITextView!
+    @IBOutlet weak var propertyIdLabel: UILabel!
+
     var property: Property? {
         didSet {
             refreshUI()
@@ -19,8 +20,18 @@ class DetailViewController: UIViewController {
     
     func refreshUI() {
         loadViewIfNeeded()
-        //descriptionLabel.text = ""
-        //descriptionLabel.text = property?.propertyDescription
+        propertyIdLabel.font = UIFont(name: "Lato-Regular", size: 16)
+        descriptionTextView.font = UIFont(name: "Lato-Regular", size: 16)
+
+        propertyIdLabel.text = ""
+        descriptionTextView.text = ""
+        let propertyIdString = "Property ID: "
+        if let propertyId = property?.propertyId{
+            propertyIdLabel.text = propertyIdString + String(propertyId)
+        }
+        if let description = property?.propertyDescription{
+            descriptionTextView.text = description
+        }
 
     }
     
@@ -38,5 +49,6 @@ class DetailViewController: UIViewController {
 extension DetailViewController: PropertySelectionDelegate {
     func propertySelected(_ newProperty: Property) {
         property = newProperty
+        self.refreshUI()
     }
 }

@@ -74,6 +74,7 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
                     let propertyObj   = Property()
                     propertyObj.title = results["title"] as! String
                     propertyObj.price = results["price"] as! Double
+                    propertyObj.propertyId = results["id"] as! Int
 
                     propertyObj.propertyState = results["state"] as! String
                     propertyObj.isPremium = results["is_premium"] as! Bool

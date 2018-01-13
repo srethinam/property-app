@@ -12,6 +12,7 @@ import Foundation
 class Property: NSObject {
     var title: String!
     var propertyState: String!
+    var propertyId: Int!
     var propertyImageUrl: String!
     var isPremium: Bool!
     var bedRooms: Int!
