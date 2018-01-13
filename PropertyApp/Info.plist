@@ -39,6 +39,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>lato-regular.ttf</string>
+		<string>lato-light.ttf</string>
+		<string>lato-hairline.ttf</string>
+		<string>lato-bold.ttf</string>
+		<string>lato-black.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

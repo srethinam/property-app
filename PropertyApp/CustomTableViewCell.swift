@@ -19,6 +19,7 @@ class CustomTableViewCell: UITableViewCell {
     @IBOutlet weak var propertyImageView: UIImageView!
     @IBOutlet weak var priceLabel: UILabel!
 
+    @IBOutlet weak var premiumImageView: UIImageView!
 
     @IBOutlet weak var avatarImageView: UIImageView!
     

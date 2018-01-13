@@ -170,6 +170,14 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
         else{
             propertiesObj = standardProperties
         }
+        
+        cell.titleLabel?.font = UIFont(name: "Lato-Regular", size: 18)
+        cell.address1Label?.font = UIFont(name: "Lato-Light", size: 14)
+        cell.address2Label?.font = UIFont(name: "Lato-Light", size: 14)
+        cell.nameLabel?.font = UIFont(name: "Lato-Light", size: 16)
+        cell.priceLabel?.font = UIFont(name: "Lato-Bold", size: 18)
+
+        
         cell.priceLabel.text = stringWithAUD+String(propertiesObj[indexPath.row].price)
         cell.priceLabel.backgroundColor = UIColor.lightGray
         cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
@@ -181,7 +189,11 @@ class MasterViewController: UITableViewController, UISplitViewControllerDelegate
 
         cell.nameLabel.text = propertiesObj[indexPath.row].firstName+emptyString+propertiesObj[indexPath.row].lastName
         //print ("index path row outside, \(indexPath.row)")
+        cell.premiumImageView.isHidden = true
         
+        if isPremium{
+            cell.premiumImageView.isHidden = false
+        }
         cell.avatarImageView?.layer.cornerRadius = (cell.avatarImageView?.frame.size.width)! / 2
         cell.avatarImageView?.layer.masksToBounds = true
         
